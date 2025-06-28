@@ -27,7 +27,7 @@ provider "kubernetes" {
   host                   = "https://${google_container_cluster.primary.endpoint}"
   token                  = data.google_client_config.current.access_token
   cluster_ca_certificate = base64decode(
-    data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate
+    google_container_cluster.primary.master_auth[0].cluster_ca_certificate
   )
 }
 
@@ -41,7 +41,7 @@ variable "worker_replicas" {
 
 resource "kubernetes_deployment" "worker" {
 
-  depends_on = [ data.google_container_cluster.primary ]
+  depends_on = [ google_container_cluster.primary ]
 
   metadata {
     name      = "worker"
