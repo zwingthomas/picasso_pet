@@ -38,6 +38,8 @@ jobs:
           spawn terraform force-unlock ${{ github.event.inputs.lock_id }}
           expect "Only 'yes' will be accepted to confirm."
           send "yes\r"
+          expect eof
+EOF
 
       - name: Confirm
         run: echo "Lock ${{ github.event.inputs.lock_id }} has been released."
