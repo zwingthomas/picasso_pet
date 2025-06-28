@@ -1,0 +1,7 @@
+celery
+redis
+pillow
+google-cloud-storage
+psycopg2-binary
+sqlalchemy
+python-dotenv
