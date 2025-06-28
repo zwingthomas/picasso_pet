@@ -105,6 +105,6 @@ resource "google_cloud_run_service_iam_member" "flask_invoker" {
 data "google_client_config" "me" {}
 
 output "terraform_caller" {
-  value     = data.google_client_config.me.account
+  value     = data.google_client_config.me.email
   sensitive = false
 }
