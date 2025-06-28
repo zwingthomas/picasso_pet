@@ -9,6 +9,7 @@ resource "google_cloud_run_service" "fastapi" {
 
   template {
     spec {
+      service_account_name = "terraform-ci@${var.project_id}.iam.gserviceaccount.com"
       containers {
         image = "gcr.io/${var.project_id}/fastapi-app:latest"
 
