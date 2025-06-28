@@ -13,6 +13,11 @@ variable "region_secondary" {
   type        = string
 }
 
+variable "credentials_file" {
+  description = "Path to GCP SA JSON key"
+  type        = string
+}
+
 variable "terraform_sa_email" {
   description = "Email of the CI/terraform service account"
   type        = string

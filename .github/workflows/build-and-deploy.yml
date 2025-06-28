@@ -21,6 +21,7 @@ jobs:
       TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_sendgrid_api_key }}
       TF_VAR_printful_api_key: ${{ secrets.TF_VAR_printful_api_key }}
       TF_VAR_gcs_bucket_name: ${{ secrets.GCS_BUCKET_NAME }}
+      TF_VAR_credentials_file: ${{ secrets.GCP_SA_KEY }}
 
     steps:
       - name: Checkout code
