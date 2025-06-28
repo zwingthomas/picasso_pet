@@ -50,6 +50,17 @@ jobs:
         working-directory: terraform
         run: terraform init -input=false
 
+      - name: Check Terraform caller identity
+        working-directory: terraform
+        run: |
+          terraform init -input=false
+          terraform plan \
+            -target=data.google_client_config.me \
+            -out=tfplan_whoami \
+            -input=false
+          # This shows the data source in the plan output
+          terraform show -no-color tfplan_whoami | grep google_client_config.me
+
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve

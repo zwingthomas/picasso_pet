@@ -101,3 +101,5 @@ resource "google_cloud_run_service_iam_member" "flask_invoker" {
   role   = "roles/run.invoker"
   member = "allUsers"
 }
+
+data "google_client_config" "me" {}
