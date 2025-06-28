@@ -13,8 +13,8 @@ variable "region_secondary" {
   type        = string
 }
 
-variable "credentials_file" {
-  description = "Path to GCP SA JSON key"
+variable "credentials_json" {
+  description = "GCP SA JSON key"
   type        = string
   sensitive   = true
 }
@@ -26,6 +26,11 @@ variable "terraform_sa_email" {
 
 variable "gcs_bucket_name" {
   description = "Name of Cloud Storage bucket for images"
+  type        = string
+}
+
+variable "database_url" {
+  description = "URL for postgres database"
   type        = string
 }
 

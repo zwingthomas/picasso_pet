@@ -8,13 +8,14 @@ resource "google_cloud_run_service" "fastapi" {
   location = var.region
 
   depends_on = [
-    google_service_account_iam_member.ci_act_as_self,
-    google_service_account_iam_member.ci_token_creator,
+    google_service_account_iam_member.ci_act_as_runtime,
+    google_service_account_iam_member.ci_token_creator_runtime,
+    google_project_iam_member.ci_project_roles,
   ]
 
   template {
     spec {
-      service_account_name = var.terraform_sa_email
+      service_account_name = google_service_account.cloudrun_runtime.email
       containers {
         image = "gcr.io/${var.project_id}/fastapi-app:latest"
 

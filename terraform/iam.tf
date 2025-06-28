@@ -1,28 +1,36 @@
-# Service account for Cloud Run services
 data "google_project" "project" {}
 
-# Bind 'Service Account User' on the terraform-ci SA to itself
-resource "google_service_account_iam_member" "ci_act_as_self" {
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.terraform_sa_email}"
+// ---------------------------------------------
+// Permissions for the Terraform CI Service Account
+// ---------------------------------------------
+
+// 1) Create a dedicated runtime SA for your Cloud Run services
+resource "google_service_account" "cloudrun_runtime" {
+  account_id   = "cloudrun-runtime"
+  display_name = "Cloud Run Runtime Service Account"
+}
+
+// 2) Let terraform-ci@… actAs that runtime SA
+resource "google_service_account_iam_member" "ci_act_as_runtime" {
+  service_account_id = google_service_account.cloudrun_runtime.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${var.terraform_sa_email}"
 }
 
-# Bind 'Token Creator' on the terraform-ci SA to itself
-resource "google_service_account_iam_member" "ci_token_creator" {
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.terraform_sa_email}"
+// 3) Let terraform-ci@… mint tokens for that runtime SA
+resource "google_service_account_iam_member" "ci_token_creator_runtime" {
+  service_account_id = google_service_account.cloudrun_runtime.name
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "serviceAccount:${var.terraform_sa_email}"
 }
 
-resource "google_project_iam_member" "cloudrun_roles" {
+// 4) Project-level roles for terraform-ci@…
+resource "google_project_iam_member" "ci_project_roles" {
   for_each = toset([
     "roles/run.admin",
-    "roles/iam.serviceAccountUser",
-    "roles/iam.serviceAccountTokenCreator",
     "roles/serviceusage.serviceUsageConsumer",
     "roles/cloudsql.client",
-    "roles/storage.admin"
+    "roles/storage.admin",
   ])
 
   project = var.project_id
@@ -30,22 +38,36 @@ resource "google_project_iam_member" "cloudrun_roles" {
   member  = "serviceAccount:${var.terraform_sa_email}"
 }
 
-# Service account for GKE node pool
-data "google_compute_network" "vpc" {
-  name = var.network_name
+// ---------------------------------------------
+// Project-level roles for Terraform CI
+// ---------------------------------------------
+resource "google_project_iam_member" "ci_project_roles" {
+  for_each = toset([
+    "roles/run.admin",                         // create & manage Cloud Run services
+    "roles/serviceusage.serviceUsageConsumer", // invoke enabled APIs
+    "roles/cloudsql.client",                  // manage Cloud SQL connections
+    "roles/storage.admin"                     // manage GCS for images & artifacts
+  ])
+
+  project = var.project_id
+  role    = each.value
+  member  = "serviceAccount:${var.terraform_sa_email}"
 }
 
+// ---------------------------------------------
+// GKE Node Pool Service Account & Roles
+// ---------------------------------------------
 resource "google_service_account" "gke_node_sa" {
   account_id   = "gke-node-sa"
   display_name = "GKE Node Service Account"
 }
 
-resource "google_project_iam_member" "gke_node_roles" {
+resource "google_service_account_iam_member" "gke_node_roles" {
   for_each = toset([
     "roles/container.nodeServiceAccount"
   ])
 
-  project = var.project_id
-  role    = each.value
-  member  = "serviceAccount:${google_service_account.gke_node_sa.email}"
+  service_account_id = google_service_account.gke_node_sa.name
+  role               = each.value
+  member             = "serviceAccount:${google_service_account.gke_node_sa.email}"
 }
