@@ -10,7 +10,7 @@ output "cloudsql_instance_connection_name" {
 
 output "gke_cluster_endpoint" {
   description = "GKE cluster endpoint"
-  value       = google_container_cluster.primary.endpoint
+  value       = data.google_container_cluster.primary.endpoint
 }
 
 output "fastapi_service_url" {
