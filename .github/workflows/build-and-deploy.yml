@@ -55,6 +55,7 @@ jobs:
       - name: Build & Push ${{ matrix.service }}
         run: |
           docker build \
+            -f worker/Dockerfile \
             -t gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
             ${{ matrix.context }}
           docker push \
