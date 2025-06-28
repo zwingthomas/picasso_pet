@@ -7,9 +7,13 @@ resource "google_cloud_run_service" "fastapi" {
   name     = "fastapi-app"
   location = var.region
 
+  depends_on = [
+    google_service_account_iam_member.terraform_act_as_cloudrun
+  ]
+
   template {
     spec {
-      service_account_name = "terraform-ci@${var.project_id}.iam.gserviceaccount.com"
+      service_account_name = google_service_account.cloudrun_runtime.email
       containers {
         image = "gcr.io/${var.project_id}/fastapi-app:latest"
 

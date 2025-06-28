@@ -1,9 +1,15 @@
 # Service account for Cloud Run services
 data "google_project" "project" {}
 
-resource "google_service_account" "cloudrun_sa" {
-  account_id   = "cloudrun-sa"
-  display_name = "Service Account for Cloud Run"
+resource "google_service_account" "cloudrun_runtime" {
+  account_id   = "cloudrun-runtime"
+  display_name = "Cloud Run Runtime Service Account"
+}
+
+resource "google_service_account_iam_member" "terraform_act_as_cloudrun" {
+  service_account_id = google_service_account.cloudrun_runtime.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${var.terraform_sa_email}"
 }
 
 resource "google_project_iam_member" "cloudrun_roles" {

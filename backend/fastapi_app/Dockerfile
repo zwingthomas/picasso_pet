@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # On start, run migrations then start Uvicorn
-CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn mai
+CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT"]

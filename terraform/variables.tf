@@ -13,6 +13,11 @@ variable "region_secondary" {
   type        = string
 }
 
+variable "terraform_sa_email" {
+  description = "Email of the CI/terraform service account"
+  type        = string
+}
+
 variable "gcs_bucket_name" {
   description = "Name of Cloud Storage bucket for images"
   type        = string
