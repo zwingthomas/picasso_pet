@@ -1,8 +1,8 @@
 # 1. Obtain GKE cluster endpoint and credentials
 #----------------------------------------------
 data "google_container_cluster" "primary" {
-  name     = google_container_cluster.primary.name
-  location = google_container_cluster.primary.location
+  name     = var.cluster_name
+  location = var.region
 }
 
 data "google_client_config" "current" {}
