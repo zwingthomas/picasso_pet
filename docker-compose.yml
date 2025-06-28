@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: petscream
+    ports:
+      - "5432:5432"
+
+  fastapi:
+    build:
+      context: ./backend/fastapi_app
+    container_name: fastapi
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  flask:
+    build:
+      context: ./backend/flask_app
+    container_name: flask_app
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fastapi
+
+  worker:
+    build:
+      context: ./worker
+    container_name: worker
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    links:
+      - redis
+      - postgres

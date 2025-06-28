@@ -1,0 +1,12 @@
+project_id        = "your-gcp-project-id"
+region            = "us-central1"
+region_secondary  = "us-east1"
+gcs_bucket_name   = "petscream-bucket"
+db_name           = "petscream"
+db_user           = "petscream_user"
+db_password       = "your_db_password"
+network_name      = "petscream-network"
+subnet_name       = "petscream-subnet"
+redis_memory_size_gb = 1
+cluster_name      = "petscream-cluster"
+cluster_node_count = 2
