@@ -39,7 +39,7 @@ jobs:
           expect "Only 'yes' will be accepted to confirm."
           send "yes\r"
           expect eof
-EOF
+          EOF
 
       - name: Confirm
         run: echo "Lock ${{ github.event.inputs.lock_id }} has been released."
