@@ -33,6 +33,16 @@ provider "kubernetes" {
 
 # 3. Deploy the Celery worker as a Kubernetes Deployment
 #------------------------------------------------------
+resource "kubernetes_service_account" "worker" {
+  metadata {
+    name      = "worker"
+    namespace = "default"
+    annotations = {
+      "iam.gke.io/gcp-service-account" = "gke-node-sa@${var.project_id}.iam.gserviceaccount.com"
+    }
+  }
+}
+
 variable "worker_replicas" {
   description = "Number of worker replicas"
   type        = number
@@ -92,7 +102,7 @@ resource "kubernetes_deployment" "worker" {
           # add any other required env vars here
         }
         # add service account reference if needed
-        service_account_name = "${google_service_account.gke_node_sa.email}"
+        service_account_name = kubernetes_service_account.worker.metadata[0].name
       }
     }
   }

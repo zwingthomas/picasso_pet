@@ -18,7 +18,10 @@ resource "google_cloud_run_service" "fastapi" {
       service_account_name = google_service_account.cloudrun_runtime.email
       containers {
         image = "us-central1-docker.pkg.dev/${var.project_id}/fastapi-app/fastapi-app:${var.image_tag}"
-
+        env {
+          name  = "PORT"
+          value = "8080"
+        }
         env {
           name  = "DATABASE_URL"
           value = "postgresql://${var.db_user}:${var.db_password}@${google_sql_database_instance.postgres.ip_address[0].ip_address}:5432/${var.db_name}"
