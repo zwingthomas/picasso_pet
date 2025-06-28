@@ -1,0 +1,26 @@
+body {
+  font-family: sans-serif;
+  margin: 1rem;
+}
+.app-container {
+  max-width: 800px;
+  margin: auto;
+}
+.cropper-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #333;
+}
+.product-list,
+.cart,
+.admin-dashboard {
+  margin-top: 2rem;
+}
+.product-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  display: inline-block;
+  margin: 0.5rem;
+  text-align: center;
+}
