@@ -6,6 +6,13 @@ resource "google_service_account" "cloudrun_runtime" {
   display_name = "Cloud Run Runtime Service Account"
 }
 
+# Allow Terraform CI to mint tokens for the runtime SA
+resource "google_service_account_iam_member" "cloudrun_runtime_token_creator" {
+  service_account_id = google_service_account.cloudrun_runtime.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${var.terraform_sa_email}"
+}
+
 resource "google_service_account_iam_member" "terraform_act_as_cloudrun" {
   service_account_id = google_service_account.cloudrun_runtime.name
   role               = "roles/iam.serviceAccountUser"
@@ -16,6 +23,8 @@ resource "google_project_iam_member" "cloudrun_roles" {
   for_each = toset([
     "roles/run.admin",
     "roles/iam.serviceAccountUser",
+    "roles/iam.serviceAccountTokenCreator",
+    "roles/serviceusage.serviceUsageConsumer",
     "roles/cloudsql.client",
     "roles/storage.admin"
   ])
