@@ -23,8 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [fastapi-app, flask-app, worker]
-        context: [backend/fastapi_app, backend/flask_app, worker]
+        include:
+          - service: fastapi-app
+            context: backend/fastapi_app
+          - service: flask-app
+            context: backend/flask_app
+          - service: worker
+            context: worker
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
