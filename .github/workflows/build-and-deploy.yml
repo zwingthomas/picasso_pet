@@ -4,26 +4,27 @@ on:
   push:
     branches: [main]
 
+env:
+  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+  GCP_REGION: ${{ secrets.GCP_REGION }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
+  TF_VAR_stripe_api_key: ${{ secrets.TF_VAR_stripe_api_key }}
+  TF_VAR_stripe_webhook_secret: ${{ secrets.TF_VAR_stripe_webhook_secret }}
+  TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_sendgrid_api_key }}
+  TF_VAR_printful_api_key: ${{ secrets.TF_VAR_printful_api_key }}
+  TF_VAR_gcs_bucket_name: ${{ secrets.GCS_BUCKET_NAME }}
+  TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
+  TF_VAR_credentials_json: ${{ secrets.GCP_SA_KEY }}
+  TF_VAR_image_tag: ${{ github.sha }}
+
 jobs:
-  infra_and_deploy:
+  build-and-push:
     runs-on: ubuntu-latest
-    environment: development
-    env:
-      # GCP settings
-      GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-      GCP_REGION: ${{ secrets.GCP_REGION }}
-      GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
-
-      # Terraform variables
-      TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
-      TF_VAR_stripe_api_key: ${{ secrets.TF_VAR_stripe_api_key }}
-      TF_VAR_stripe_webhook_secret: ${{ secrets.TF_VAR_stripe_webhook_secret }}
-      TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_sendgrid_api_key }}
-      TF_VAR_printful_api_key: ${{ secrets.TF_VAR_printful_api_key }}
-      TF_VAR_gcs_bucket_name: ${{ secrets.GCS_BUCKET_NAME }}
-      TF_VAR_credentials_file: ${{ secrets.GCP_SA_KEY }}
-      TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
-
+    strategy:
+      matrix:
+        service: [fastapi-app, flask-app, worker]
+        context: [backend/fastapi_app, backend/flask_app, worker]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,47 +40,49 @@ jobs:
           project_id: ${{ env.GCP_PROJECT }}
 
       - name: Configure Docker for GCR
-        run: gcloud auth configure-docker --quiet
+        run: |
+          gcloud auth configure-docker --quiet
+
+      - name: Build & Push ${{ matrix.service }}
+        run: |
+          docker build \
+            -t gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
+            ${{ matrix.context }}
+          docker push \
+            gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }}
+
+  terraform:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP (for Terraform)
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.GCP_PROJECT }}
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.3.9"
 
-      - name: Build & Push FastAPI image
-        run: |
-          docker build \
-            -t gcr.io/${{ env.GCP_PROJECT }}/fastapi-app:${{ github.sha }} \
-            backend/fastapi_app
-          docker push gcr.io/${{ env.GCP_PROJECT }}/fastapi-app:${{ github.sha }}
-
-      - name: Build & Push Flask image
-        run: |
-          docker build \
-            -t gcr.io/${{ env.GCP_PROJECT }}/flask-app:${{ github.sha }} \
-            backend/flask_app
-          docker push gcr.io/${{ env.GCP_PROJECT }}/flask-app:${{ github.sha }}
-
-      - name: Build & Push Worker image
-        run: |
-          docker build \
-            -t gcr.io/${{ env.GCP_PROJECT }}/worker:${{ github.sha }} \
-            worker
-          docker push gcr.io/${{ env.GCP_PROJECT }}/worker:${{ github.sha }}
-
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -input=false
+        run: terraform init -reconfigure -input=false
 
       - name: Check Terraform caller identity
         working-directory: terraform
         run: |
-          # 1. Initialize (backend + providers)
-          terraform init -input=false
-
-          # 2. Apply only the data.google_client_config.me block
           terraform apply \
-            -target=null_resource.whoami \
+            -target=data.google_client_config.me \
             -auto-approve
 
       - name: Terraform Apply
