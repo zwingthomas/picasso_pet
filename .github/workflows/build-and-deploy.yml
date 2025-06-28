@@ -21,6 +21,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: development
     strategy:
       matrix:
         include:
