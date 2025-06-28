@@ -62,7 +62,7 @@ jobs:
             -t gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
             ${{ matrix.context }}
           docker push \
-            gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }}
+            us-central1-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }}
 
   terraform:
     needs: build-and-push
