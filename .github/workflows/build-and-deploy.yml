@@ -53,13 +53,16 @@ jobs:
       - name: Check Terraform caller identity
         working-directory: terraform
         run: |
+          # 1. Initialize (backend + providers)
           terraform init -input=false
-          terraform plan \
+
+          # 2. Apply only the data.google_client_config.me block
+          terraform apply \
             -target=data.google_client_config.me \
-            -out=tfplan_whoami \
-            -input=false
-          # This shows the data source in the plan output
-          terraform show -no-color tfplan_whoami | grep google_client_config.me
+            -auto-approve
+
+          # 3. Now output the caller account
+          terraform output terraform_caller
 
       - name: Terraform Apply
         working-directory: terraform
