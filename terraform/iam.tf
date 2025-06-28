@@ -22,7 +22,7 @@ resource "google_project_iam_member" "cloudrun_roles" {
 
   project = var.project_id
   role    = each.value
-  member  = "serviceAccount:${google_service_account.cloudrun_sa.email}"
+  member  = "serviceAccount:${google_service_account.cloudrun_runtime.email}"
 }
 
 # Service account for GKE node pool
