@@ -17,7 +17,7 @@ resource "google_cloud_run_service" "fastapi" {
     spec {
       service_account_name = google_service_account.cloudrun_runtime.email
       containers {
-        image = "gcr.io/${var.project_id}/fastapi-app:latest"
+        image = "us-central1-docker.pkg.dev/${var.project_id}/fastapi-app/fastapi-app:${var.image_tag}"
 
         env {
           name  = "DATABASE_URL"
@@ -79,7 +79,7 @@ resource "google_cloud_run_service" "flask" {
   template {
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/flask-app:latest"
+        image = "us-central1-docker.pkg.dev/${var.project_id}/flask-app/flask-app:${var.image_tag}"
         env { 
             name = "API_URL"
             value = google_cloud_run_service.fastapi.status[0].url 

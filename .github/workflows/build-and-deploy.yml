@@ -91,13 +91,6 @@ jobs:
         working-directory: terraform
         run: terraform init -reconfigure -input=false
 
-      - name: Check Terraform caller identity
-        working-directory: terraform
-        run: |
-          terraform apply \
-            -target=data.google_client_config.me \
-            -auto-approve
-
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve

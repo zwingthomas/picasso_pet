@@ -94,3 +94,8 @@ variable "printful_api_key" {
   description = "API key for printful"
   type        = string
 }
+
+variable "image_tag" {
+  description = "The git commit SHA for this deployment"
+  type        = string
+}

@@ -48,12 +48,8 @@ resource "google_service_account" "gke_node_sa" {
   display_name = "GKE Node Service Account"
 }
 
-resource "google_service_account_iam_member" "gke_node_roles" {
-  for_each = toset([
-    "roles/container.nodeServiceAccount"
-  ])
-
+resource "google_service_account_iam_member" "nodepool_actas" {
   service_account_id = google_service_account.gke_node_sa.name
-  role               = each.value
-  member             = "serviceAccount:${google_service_account.gke_node_sa.email}"
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${var.terraform_sa_email}"
 }
