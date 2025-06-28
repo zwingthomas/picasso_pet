@@ -1,3 +1,6 @@
+
+# 1. Stand up main GKE cluster
+#----------------------------------------------
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.region
@@ -16,19 +19,12 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-# 1. Obtain GKE cluster endpoint and credentials
-#----------------------------------------------
-data "google_container_cluster" "primary" {
-  name     = var.cluster_name
-  location = var.region
-}
-
-data "google_client_config" "current" {}
-
 # 2. Configure the Kubernetes provider to talk to your GKE cluster
 #----------------------------------------------------------------
+data "google_client_config" "current" {}
+
 provider "kubernetes" {
-  host                   = "https://${data.google_container_cluster.primary.endpoint}"
+  host                   = "https://${google_container_cluster.primary.endpoint}"
   token                  = data.google_client_config.current.access_token
   cluster_ca_certificate = base64decode(
     data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate
