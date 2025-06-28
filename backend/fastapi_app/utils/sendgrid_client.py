@@ -14,8 +14,9 @@ def send_order_confirmation(order):
     )
     sg.send(msg)
 
-# stub: implement after tracking
- def send_shipping_notification(order):
+
+def send_shipping_notification(order):
+    # TODO: implement after tracking
     msg = Mail(
         from_email="no-reply@petscreamshop.com",
         to_emails=order.user_email,
