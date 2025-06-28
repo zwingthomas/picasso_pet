@@ -1,6 +1,6 @@
 project_id        = "picasso-pet"
 region            = "us-central1"
-region_secondary  = "us-east1"
+region_secondary  = "us-central1-b"
 gcs_bucket_name   = "picasso-pet-images-bucket"
 db_name           = "picasso-pet"
 db_user           = "picasso_pet_user"
