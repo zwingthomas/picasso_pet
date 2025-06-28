@@ -14,7 +14,7 @@ resource "google_cloud_run_service" "fastapi" {
 
   template {
     spec {
-      service_account_name = google_service_account.cloudrun_runtime.email
+      service_account_name = var.terraform_sa_email
       containers {
         image = "gcr.io/${var.project_id}/fastapi-app:latest"
 
