@@ -59,7 +59,7 @@ jobs:
         run: |
           docker build \
             -f worker/Dockerfile \
-            -t us-central1-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
+            -t us-central1-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ matrix.service }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
             ${{ matrix.context }}
           docker push \
             us-central1-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ matrix.service }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }}
