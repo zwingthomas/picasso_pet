@@ -1,21 +1,17 @@
 # Service account for Cloud Run services
 data "google_project" "project" {}
 
-resource "google_service_account" "cloudrun_runtime" {
-  account_id   = "cloudrun-runtime"
-  display_name = "Cloud Run Runtime Service Account"
-}
-
-# Allow Terraform CI to mint tokens for the runtime SA
-resource "google_service_account_iam_member" "cloudrun_runtime_token_creator" {
-  service_account_id = google_service_account.cloudrun_runtime.name
-  role               = "roles/iam.serviceAccountTokenCreator"
+# Bind 'Service Account User' on the terraform-ci SA to itself
+resource "google_service_account_iam_member" "ci_act_as_self" {
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.terraform_sa_email}"
+  role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${var.terraform_sa_email}"
 }
 
-resource "google_service_account_iam_member" "terraform_act_as_cloudrun" {
-  service_account_id = google_service_account.cloudrun_runtime.name
-  role               = "roles/iam.serviceAccountUser"
+# Bind 'Token Creator' on the terraform-ci SA to itself
+resource "google_service_account_iam_member" "ci_token_creator" {
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.terraform_sa_email}"
+  role               = "roles/iam.serviceAccountTokenCreator"
   member             = "serviceAccount:${var.terraform_sa_email}"
 }
 

@@ -8,8 +8,8 @@ resource "google_cloud_run_service" "fastapi" {
   location = var.region
 
   depends_on = [
-    google_service_account_iam_member.terraform_act_as_cloudrun,
-    google_project_iam_member.cloudrun_roles
+    google_service_account_iam_member.ci_act_as_self,
+    google_service_account_iam_member.ci_token_creator,
   ]
 
   template {

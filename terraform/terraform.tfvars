@@ -1,8 +1,6 @@
 project_id        = "picasso-pet"
 region            = "us-central1"
 region_secondary  = "us-central1-b"
-redis_primary_zone = "us-central1-c"
-redis_secondary_zone = "us-central1-b"
 redis_memory_size_gb = 1
 terraform_sa_email = "terraform-ci@picasso-pet.iam.gserviceaccount.com"
 gcs_bucket_name   = "picasso-pet-images-bucket"
