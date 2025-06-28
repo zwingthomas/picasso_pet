@@ -64,7 +64,7 @@ jobs:
           docker push \
             us-central1-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ matrix.service }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }}
 
-  terraform:
+  deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     environment: development

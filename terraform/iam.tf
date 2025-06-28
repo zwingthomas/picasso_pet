@@ -24,20 +24,6 @@ resource "google_service_account_iam_member" "ci_token_creator_runtime" {
   member             = "serviceAccount:${var.terraform_sa_email}"
 }
 
-// 4) Project-level roles for terraform-ci@…
-resource "google_project_iam_member" "ci_project_roles" {
-  for_each = toset([
-    "roles/run.admin",
-    "roles/serviceusage.serviceUsageConsumer",
-    "roles/cloudsql.client",
-    "roles/storage.admin",
-  ])
-
-  project = var.project_id
-  role    = each.value
-  member  = "serviceAccount:${var.terraform_sa_email}"
-}
-
 // ---------------------------------------------
 // Project-level roles for Terraform CI
 // ---------------------------------------------
