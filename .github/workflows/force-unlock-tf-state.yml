@@ -1,0 +1,38 @@
+name: Terraform Force-Unlock State
+
+on:
+  workflow_dispatch:
+    inputs:
+      lock_id:
+        description: "Terraform lock ID to force-unlock"
+        required: true
+
+jobs:
+  unlock:
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.3.9"
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -input=false
+
+      - name: Force-Unlock Terraform State
+        working-directory: terraform
+        run: terraform force-unlock ${{ github.event.inputs.lock_id }}
+
+      - name: Confirm
+        run: echo "Lock ${{ github.event.inputs.lock_id }} has been released."
