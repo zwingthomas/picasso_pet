@@ -1,0 +1,66 @@
+# ---- Operating System ----
+.DS_Store
+Thumbs.db
+
+# ---- Secrets & Env ----
+.env
+*.pem
+*.key
+# Local credentials for Google SDK, Docker contexts, etc.
+credentials.json
+GOOGLE_APPLICATION_CREDENTIALS.json
+
+# ---- Terraform ----
+.terraform/
+*.tfstate
+*.tfstate.backup
+terraform.tfvars     # if you kept sensitive defaults here
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+crash.log
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+pip-wheel-metadata/
+venv/
+build/
+dist/
+
+# ---- Flask App ----
+backend/flask_app/*.pyo
+backend/flask_app/*.pyc
+
+# ---- FastAPI App ----
+backend/fastapi_app/*.pyo
+backend/fastapi_app/*.pyc
+
+# ---- Celery Worker ----
+worker/*.pyo
+worker/*.pyc
+
+# ---- Node / React ----
+node_modules/
+build/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Docker ----
+docker-compose.override.yml
+*.log
+
+# ---- IDEs & Editors ----
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ---- Misc ----
+*.sw?
