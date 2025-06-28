@@ -27,8 +27,8 @@ variable "worker_replicas" {
 
 resource "kubernetes_deployment" "worker" {
 
-  depends_on = [ google_container_cluster.primary ]
-  
+  depends_on = [ data.google_container_cluster.primary ]
+
   metadata {
     name      = "worker"
     namespace = "default"
