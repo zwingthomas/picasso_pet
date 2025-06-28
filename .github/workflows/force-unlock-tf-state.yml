@@ -32,7 +32,7 @@ jobs:
 
       - name: Force-Unlock Terraform State
         working-directory: terraform
-        run: terraform force-unlock ${{ github.event.inputs.lock_id }}
+        run: echo yes | terraform force-unlock ${{ github.event.inputs.lock_id }}
 
       - name: Confirm
         run: echo "Lock ${{ github.event.inputs.lock_id }} has been released."
