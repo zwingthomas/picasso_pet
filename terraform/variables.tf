@@ -16,6 +16,7 @@ variable "region_secondary" {
 variable "credentials_file" {
   description = "Path to GCP SA JSON key"
   type        = string
+  sensitive   = true
 }
 
 variable "terraform_sa_email" {
