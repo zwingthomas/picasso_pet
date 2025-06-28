@@ -29,13 +29,13 @@ jobs:
       matrix:
         include:
           - service: fastapi-app
-            context: /backend/fastapi_app
+            context: backend/fastapi_app
             dockerfile: backend/fastapi_app/Dockerfile
           - service: flask-app
-            context: /backend/flask_app
+            context: backend/flask_app
             dockerfile: backend/flask_app/Dockerfile
           - service: worker
-            context: /worker
+            context: worker
             dockerfile: worker/Dockerfile
     steps:
       - name: Checkout code
