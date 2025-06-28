@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     strategy:
+      # don't kill the others if one fails
+      fail-fast: false
+      # run all three jobs in parallel
       matrix:
         include:
           - service: fastapi-app
