@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Catalog - Pet Scream Shop</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Catalog</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Home</a> |
+      <a href="{{ url_for('upload') }}">Upload your pet</a>
+    </nav>
+    <div class="product-list">
+      {% for product in products %}
+      <div class="product-card">
+        <h2>{{ product.name }}</h2>
+        <p>Price: ${{ '%.2f'|format(product.price_cents/100) }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
