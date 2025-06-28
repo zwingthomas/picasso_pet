@@ -102,9 +102,8 @@ resource "google_cloud_run_service_iam_member" "flask_invoker" {
   member = "allUsers"
 }
 
-data "google_client_config" "me" {}
-
-output "terraform_caller" {
-  value     = data.google_client_config.me.email
-  sensitive = false
+resource "null_resource" "whoami" {
+  provisioner "local-exec" {
+    command = "gcloud auth list --filter=status:ACTIVE --format='value(account)'"
+  }
 }

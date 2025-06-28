@@ -57,11 +57,8 @@ jobs:
 
           # 2. Apply only the data.google_client_config.me block
           terraform apply \
-            -target=data.google_client_config.me \
+            -target=null_resource.whoami \
             -auto-approve
-
-          # 3. Now output the caller account
-          terraform output terraform_caller
 
       - name: Terraform Apply
         working-directory: terraform
