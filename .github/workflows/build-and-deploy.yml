@@ -29,10 +29,13 @@ jobs:
       matrix:
         include:
           - service: fastapi-app
+            context: backend/fastapi_app
             dockerfile: backend/fastapi_app/Dockerfile
           - service: flask-app
+            context: backend/flask_app
             dockerfile: backend/flask_app/Dockerfile
           - service: worker
+            context: worker
             dockerfile: worker/Dockerfile
     steps:
       - name: Checkout code
@@ -55,7 +58,7 @@ jobs:
       - name: Build & Push ${{ matrix.service }}
         run: |
           docker build \
-            -f ${{ matrix.dockerfile }} \
+            -f worker/Dockerfile \
             -t gcr.io/${{ env.GCP_PROJECT }}/${{ matrix.service }}:${{ env.TF_VAR_image_tag }} \
             ${{ matrix.context }}
           docker push \
