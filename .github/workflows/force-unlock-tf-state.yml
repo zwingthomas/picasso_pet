@@ -33,13 +33,15 @@ jobs:
       - name: Force-Unlock Terraform State
         working-directory: terraform
         run: |
-          sudo apt-get update && sudo apt-get install -y expect
-          expect <<EOF
-          spawn terraform force-unlock ${{ github.event.inputs.lock_id }}
-          expect "Only 'yes' will be accepted to confirm."
-          send "yes\r"
-          expect eof
-          EOF
+          terraform force-unlock -force ${{ github.event.inputs.lock_id }}
 
-      - name: Confirm
-        run: echo "Lock ${{ github.event.inputs.lock_id }} has been released."
+      - name: Confirm Lock File Removal
+        run: |
+          LOCK_FILE="gs://petscream-tfstate/terraform/state/default.tflock"
+          echo "Checking for $LOCK_FILE"
+          if gsutil -q stat "$LOCK_FILE"; then
+            echo "::error ::Lock file still exists at $LOCK_FILE"
+            exit 1
+          else
+            echo "Lock file is gone: state is unlocked."
+          fi
