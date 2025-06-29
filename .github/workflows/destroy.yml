@@ -11,6 +11,7 @@ jobs:
   destroy:
     if: ${{ github.event.inputs.confirm == 'DESTROY' }}
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout repositories
         uses: actions/checkout@v3
