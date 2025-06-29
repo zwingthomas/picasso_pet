@@ -15,6 +15,10 @@ resource "google_service_account_iam_member" "ci_act_as_runtime" {
   service_account_id = google_service_account.cloudrun_runtime.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${var.terraform_sa_email}"
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // 3) Let terraform-ci@… mint tokens for that runtime SA
@@ -22,6 +26,10 @@ resource "google_service_account_iam_member" "ci_token_creator_runtime" {
   service_account_id = google_service_account.cloudrun_runtime.name
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "serviceAccount:${var.terraform_sa_email}"
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // ---------------------------------------------
@@ -38,6 +46,10 @@ resource "google_project_iam_member" "ci_project_roles" {
   project = var.project_id
   role    = each.value
   member  = "serviceAccount:${var.terraform_sa_email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // ---------------------------------------------
@@ -52,4 +64,8 @@ resource "google_service_account_iam_member" "nodepool_actas" {
   service_account_id = google_service_account.gke_node_sa.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${var.terraform_sa_email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
